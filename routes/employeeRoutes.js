@@ -50,6 +50,18 @@ router.post('/employees', (request, response)=>{
 })
 
 //Roles Post Routes
+router.post('/roles', (request, response)=>{
+  db.query('INSERT INTO roles SET ?', request.body, error=>{
+    if(error){console.error(error)}
+    response.sendStatus(200)
+  })
+})
 
 //Department Post Routes
+router.post('/departments', (request, response)=>{
+  db.query('INSERT INTO departments SET ?', request.body, error=>{
+    if(error){console.error(error)}
+    response.sendStatus(200)
+  })
+})
 module.exports = router
