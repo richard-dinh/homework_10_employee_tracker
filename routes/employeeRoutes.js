@@ -1,66 +1,40 @@
 const router = require('express').Router()
-const db = require('../config/db.js')
+const {getEmployees, getEmployee, createEmployee, updateEmployee, deleteEmployee} = require('../controllers/employeeController.js')
 
 //GET ROUTES
 
 //Employee Get Routes
 //Get all employees
 router.get('/employees', (request, response)=>{
-  db.query('SELECT * FROM employees', (error, employees)=>{
-    if(error){console.error(error)}
+  getEmployees(employees =>{
     response.json(employees)
   })
 })
 
-
-//Roles Get Routes
-//Get all roles
-router.get('/roles', (request, response)=>{
-  db.query('SELECT * FROM roles', (error, roles)=>{
-    if(error){console.error(error)}
-    response.json(roles)
+//Get one employee
+router.get('/employees/:id', (request, response) => {
+  getEmployee(request.params.id, person=>{
+    response.json(person)
   })
 })
 
-//Department Get Routes
-//Get all departments
-router.get('/departments', (request, response)=>{
-  db.query('SELECT * FROM departments', (error, departments)=>{
-    if(error){console.error(error)}
-    response.json(departments)
-  })
-})
-
-//POST ROUTES
-//Employee Post Routes
-//Create a new Employee
-router.post('/employees', (request, response)=>{
-  // request.body must come in Object format:
-  /*{
-    id,
-    first_name,
-    last_name,
-    role_id,
-    manager_id (optional)
-  }*/
-  db.query('INSERT INTO employees SET ?', request.body, error=>{
-    if(error){console.error(error)}
+//create an employee
+router.post('/employees', (request, response) => {
+  createEmployee(request.body, ()=>{
     response.sendStatus(200)
   })
 })
 
-//Roles Post Routes
-router.post('/roles', (request, response)=>{
-  db.query('INSERT INTO roles SET ?', request.body, error=>{
-    if(error){console.error(error)}
+// update an employee
+router.put('/employees/:id', (request, response) => {
+  updateEmployee(request.params.id, request.body, ()=>{
     response.sendStatus(200)
   })
 })
 
-//Department Post Routes
-router.post('/departments', (request, response)=>{
-  db.query('INSERT INTO departments SET ?', request.body, error=>{
-    if(error){console.error(error)}
+// delete an employee
+router.delete('/employees/:id', (request, response) => {
+  deleteEmployee(request.params.id, ()=>{
     response.sendStatus(200)
   })
 })
