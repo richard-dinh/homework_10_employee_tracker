@@ -19,13 +19,13 @@ router.post('/departments', (request, response) => {
     response.sendStatus(200)
   })
 })
-// Update a department
+// Update a department by id
 router.put('/departments/:id', (request, response) => {
   updateDepartment(request.params.id, request.body, ()=>{
     response.sendStatus(200)
   })
 })
-// Delete a department
+// Delete a department by id
 router.delete('/departments/:id', (request, response) => {
   deleteDepartment(request.params.id, ()=>{
     response.sendStatus(200)

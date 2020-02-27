@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/richard-dinh/homework_10_employee_tracker#readme",
   "dependencies": {
+    "axios": "^0.19.2",
+    "console.table": "^0.10.0",
     "express": "^4.17.1",
     "inquirer": "^7.0.4",
     "mysql2": "^2.1.0"
