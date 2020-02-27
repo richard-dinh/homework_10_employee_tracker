@@ -70,7 +70,4 @@ const employee = {
   }
 }
 
-employee.getEmployeesWithID(data=>{
-  console.log(data)
-})
 module.exports = employee
