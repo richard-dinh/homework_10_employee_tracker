@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {getEmployees, getEmployee, createEmployee, updateEmployee, deleteEmployee} = require('../controllers/employeeController.js')
+const { getEmployees, getEmployeesByDepartment, createEmployee, updateEmployee, deleteEmployee} = require('../controllers/employeeController.js')
 
 //GET ROUTES
 
@@ -11,10 +11,10 @@ router.get('/employees', (request, response)=>{
   })
 })
 
-//Get one employee
-router.get('/employees/:id', (request, response) => {
-  getEmployee(request.params.id, person=>{
-    response.json(person)
+//Get all employees by department
+router.get('/employees/:deptName', (request, response) => {
+  getEmployee(request.params.deptName.replace(/\+/g, ' '), employees=>{
+    response.json(employees)
   })
 })
 
