@@ -1,5 +1,5 @@
 //Bring in routes
-const { getEmployees, getEmployeesByDepartment, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
+const { getEmployees, getEmployeesByDepartment, getEmployeesByManager, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
 const { getDepartments, getDepartment, createDepartment, updateDepartment, deleteDepartment } = require('./controllers/departmentController.js')
 const { getRoles, getRole, createRole, updateRole, deleteRole } = require('./controllers/roleController.js')
 
@@ -14,11 +14,13 @@ const init = async () => {
       type: 'list',
       name: 'choice',
       message: 'What would you like to do?',
-      choices: ['View All Employees by Department', 'View all Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles']
+      choices: ['View all Employees, View all Employees by Department', 'View all Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles']
     }
   ])
   switch (choice) {
-    case 'View All Employees by Department':
+    case 'View all Employees':
+      break
+    case 'View all Employees by Department':
       console.log('dept')
       init()
       break
@@ -45,9 +47,6 @@ const init = async () => {
     case 'View All Roles':
       console.log('view all roles')
       init()
-      break
-    case 'EXIT':
-      process.exit()
       break
   }
 }

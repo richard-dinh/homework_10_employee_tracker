@@ -4,7 +4,7 @@ const employee = {
   // get all employees
   getEmployees(callback) {
     db.query(`
-    SELECT employees.employee_id, employees.first_name, employees.last_name, roles.role_title, departments.department_name, roles.salary
+    SELECT employees.employee_id, employees.first_name, employees.last_name, roles.role_title, departments.department_name, roles.salary, manager_id
     FROM employees
     INNER JOIN roles
     ON employees.role_id = roles.role_id
@@ -25,6 +25,16 @@ const employee = {
     ON roles.department_id = departments.department_id
     WHERE ?
     `, {department_name: deptName}, (error, employees)=>{
+      if(error) throw error
+      callback(employees)
+    })
+  },
+  //get All Employees under a manager by ID
+  getEmployeesByManager(id, callback) {
+    db.query(`
+    USE employees_db;
+    SELECT first_name, last_name, manager_id FROM employees
+    WHERE ?`, {manager_id: id}, (error, employees)=>{
       if(error) throw error
       callback(employees)
     })
