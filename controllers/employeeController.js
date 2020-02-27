@@ -34,6 +34,14 @@ const employee = {
   },
   // create an employee
   createEmployee(employeeInfo, callback){
-    
+    //employee info must be passed in as an object with all the necessary info
+    db.query('INSERT INTO employee SET ?', employeeInfo, error=>{
+      if(error) throw error
+      callback()
+    })
+  },
+  // update employee
+  updateEmployee(id, updates, callback){
+
   },
 }
