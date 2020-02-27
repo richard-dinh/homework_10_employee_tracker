@@ -42,6 +42,10 @@ const employee = {
   },
   // update employee
   updateEmployee(id, updates, callback){
-
+    db.query('UPDATE employees SET ? WHERE ?', [updates, {employee_id: id}], error=>{
+      if(error) throw error
+      callback()
+    })
   },
+  
 }
