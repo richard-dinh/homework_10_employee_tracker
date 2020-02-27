@@ -8,6 +8,22 @@ const cTable = require('console.table')
 //bring in inqurier
 const prompt = require('inquirer').createPromptModule()
 
+
+//replaces the manager id with the employee's name
+const replaceManagerID = (names, employees)=>{
+  for (let i = 0; i < employees.length; i++) {
+    for (let j = 0; j < names.length; j++) {
+      if (employees[i].manager_id === names[j].employee_id) {
+        employees[i].manager_name = names[j].name
+      } else if (employees[i].manager_id === null) {
+        employees[i].manager_name = 'Null'
+      }
+    }
+    delete employees[i].manager_id
+  }
+  return employees
+}
+
 const init = async () => {
   let { choice } = await prompt([
     {
@@ -19,31 +35,11 @@ const init = async () => {
   ])
   switch (choice) {
     case 'View all Employees':
-      let names = []
-      getEmployeesWithID(data =>{
-        data.forEach(person => {
-          names.push({
-            employee_id: person.employee_id,
-            name: `${person.first_name} ${person.last_name}`
-          }) 
-        })
-        // console.log(names)
         getEmployees(employees =>{
-          for(let i = 0; i<employees.length; i++){
-            for(let j = 0; j<names.length; j++){
-              if(employees[i].manager_id===names[j].employee_id){
-                employees[i].manager_name = names[j].name
-              }else if (employees[i].manager_id ===null) {
-                employees[i].manager_name = 'Null'
-              }
-            }
-            delete employees[i].manager_id
-          }
+          employees = replaceManagerID(names, employees)
           console.table(employees)
           init()
         })
-
-      })
       break
     case 'View all Employees by Department':
       console.log('dept')
@@ -72,5 +68,16 @@ const init = async () => {
   }
 }
 
+//populating names array with employee id and combined first and last name
+let names = []
+getEmployeesWithID(data => {
+  data.forEach(person => {
+    names.push(
+      {
+      employee_id: person.employee_id,
+      name: `${person.first_name} ${person.last_name}`
+      }
+    )
+  })
+})
 init()
-
