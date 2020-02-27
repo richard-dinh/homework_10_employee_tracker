@@ -14,8 +14,8 @@ const employee = {
       callback(employees)
     })
   },
-  // Get one employee by id
-  getEmployee(id, callback) {
+  // Get all employees by deptartment
+  getEmployeesByDepartment(deptName, callback) {
     db.query(`
     SELECT employees.employee_id, employees.first_name, employees.last_name, roles.role_title, departments.department_name, roles.salary
     FROM employees
@@ -24,9 +24,9 @@ const employee = {
     INNER JOIN departments
     ON roles.department_id = departments.department_id
     WHERE ?
-    `, {employee_id: id}, (error, person)=>{
+    `, {department_name: deptName}, (error, employees)=>{
       if(error) throw error
-      callback(person)
+      callback(employees)
     })
   },
   // create an employee
