@@ -1,7 +1,7 @@
 -- Department Seed Data
 USE employees_db;
 
-INSERT INTO departments(name)
+INSERT INTO departments(department_name)
 VALUES
   ('Engineering'),
   ('Human Resources'),
@@ -13,7 +13,7 @@ VALUES
 -- Role Seed Data
 USE employees_db;
 
-INSERT INTO roles(title, salary, department_id)
+INSERT INTO roles(role_title, salary, department_id)
 VALUES
   ('Software Engineer Lead', 200000, 1),
   ('Software Engineer', 150000, 1),
