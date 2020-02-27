@@ -26,7 +26,7 @@ router.put('/departments/:id', (request, response) => {
   })
 })
 // Delete a department
-router.get('/departments/:id', (request, response) => {
+router.delete('/departments/:id', (request, response) => {
   deleteDepartment(request.params.id, ()=>{
     response.sendStatus(200)
   })
