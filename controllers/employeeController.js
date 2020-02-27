@@ -17,7 +17,7 @@ const employee = {
     })
   },
   // Get one employee by id
-  getEmployee(id, callback){
+  getEmployee(id, callback) {
     db.query(`
     Use employees_db;
     SELECT employees.employee_id, employees.first_name, employees.last_name, roles.role_title, departments.department_name, roles.salary
@@ -33,7 +33,7 @@ const employee = {
     })
   },
   // create an employee
-  createEmployee(employeeInfo, callback){
+  createEmployee(employeeInfo, callback) {
     //employee info must be passed in as an object with all the necessary info
     db.query('INSERT INTO employee SET ?', employeeInfo, error=>{
       if(error) throw error
@@ -41,11 +41,17 @@ const employee = {
     })
   },
   // update employee
-  updateEmployee(id, updates, callback){
+  updateEmployee(id, updates, callback) {
     db.query('UPDATE employees SET ? WHERE ?', [updates, {employee_id: id}], error=>{
       if(error) throw error
       callback()
     })
   },
-  
+  // delete employee
+  deleteEmployee(id, callback) {
+    db.query('DELETE FROM employees WHERE ?', {employee_id: id}, error=>{
+      if(error) throw error
+      callback()
+    })
+  }
 }
