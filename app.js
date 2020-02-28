@@ -33,8 +33,6 @@ const init = async () => {
       names.push(
         {
           employee_id: person.employee_id,
-          first_name: person.first_name,
-          last_name: person.last_name,
           name: `${person.first_name} ${person.last_name}`
         }
       )
@@ -51,9 +49,20 @@ const init = async () => {
   switch (choice) {
     case 'View all Employees':
       getEmployees(employees => {
-        employees = replaceManagerID(names, employees)
-        console.table(employees)
-        init()
+        let names = []
+        getEmployeesWithID(data => {
+          data.forEach(person => {
+            names.push(
+              {
+                employee_id: person.employee_id,
+                name: `${person.first_name} ${person.last_name}`
+              }
+            )
+          })
+          employees = replaceManagerID(names, employees)
+          console.table(employees)
+          init()
+        })
       })
       break
     case 'View all Employees by Department':

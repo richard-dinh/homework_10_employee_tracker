@@ -77,8 +77,8 @@ const employee = {
     })
   },
   // delete employee
-  deleteEmployee(id, callback) {
-    db.query('DELETE FROM employees WHERE ?', {employee_id: id}, error=>{
+  deleteEmployee(fullname, callback) {
+    db.query(`DELETE FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name) = '${fullname}';`, error=>{
       if(error) throw error
       callback()
     })
