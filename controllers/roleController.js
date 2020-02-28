@@ -15,7 +15,7 @@ const role = {
   // Get one role by role title
   getRole(roleTitle, callback) {
     db.query(`
-    SELECT roles.role_title, roles.salary, departments.department_name
+    SELECT roles.role_id, roles.role_title, roles.salary, departments.department_name
     FROM roles
     INNER JOIN departments
     ON roles.department_id = departments.department_id

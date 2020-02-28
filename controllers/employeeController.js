@@ -46,6 +46,21 @@ const employee = {
     })
 
   },
+  //get only employee names
+  getEmployeeNames(callback){
+    db.query(`SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS whole_name FROM employees`, (error, employees)=>{
+      if(error) throw error
+      callback(employees)
+    })
+  },
+  getEmployeeByName(fullname, callback){
+    db.query(`
+    SELECT * FROM employees
+    WHERE CONCAT(employees.first_name, ' ', employees.last_name) = '${fullname}';`, (error, employee)=>{
+      if(error) throw error
+      callback(employee)
+    })
+  },
   // create an employee
   createEmployee(employeeInfo, callback) {
     //employee info must be passed in as an object with all the necessary info

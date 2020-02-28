@@ -1,5 +1,5 @@
 //Bring in routes
-const { getEmployees, getEmployeesByDepartment, getEmployeesByManager, getEmployeesWithID, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
+const { getEmployees, getEmployeesByDepartment, getEmployeesByManager, getEmployeesWithID, getEmployeeNames, getEmployeeByName, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
 const { getDepartments, getDepartment, createDepartment, updateDepartment, deleteDepartment } = require('./controllers/departmentController.js')
 const { getRoles, getRole, createRole, updateRole, deleteRole } = require('./controllers/roleController.js')
 
@@ -33,6 +33,8 @@ const init = async () => {
       names.push(
         {
           employee_id: person.employee_id,
+          first_name: person.first_name,
+          last_name: person.last_name,
           name: `${person.first_name} ${person.last_name}`
         }
       )
@@ -81,12 +83,64 @@ const init = async () => {
       })
       break
     case 'View all Employees by Manager':
-      console.log('manager')
-      init()
       break
     case 'Add Employee':
-      console.log('Add')
-      init()
+      getEmployeeNames(employees=>{
+        //only taking the names
+        employees = employees.map(element => element.whole_name)
+        // provide a none option
+        employees.push('None')
+        getRoles(roles =>{
+          roles = roles.map(element => element.role_title)
+          prompt([
+            {
+              type: 'input',
+              name: 'first_name',
+              message: `What is the new Employee's first name?`
+            },
+            {
+              type: 'input',
+              name: 'last_name',
+              message: `What is the new Employee's last name?`
+            },
+            {
+              type: 'list',
+              name: 'role',
+              message: `What is the new Employee's role?`,
+              choices: roles
+            },
+            {
+              type: 'list',
+              name: 'manager',
+              message: `Who is the new Employee's Manager?`,
+              choices: employees
+            }
+          ])
+          .then(({first_name, last_name, role, manager})=>{
+            getRole(role, data=>{
+              console.log(data)
+              process.exit()
+            })
+            // console.log(first_name, last_name, role, manager)
+            // if(manager ==='None'){
+            //   createEmployee(
+            //     {
+            //       first_name: first_name,
+            //       last_name: last_name
+            //     },()=>{})
+            // }else{
+            //   getEmployeeByName(manager, data => {
+            //     //only getting employeeID
+            //     data = data.map(element => element.employee_id)
+            //     process.exit()
+            //   })
+            // }
+          })
+          .catch(error=>console.error(error))
+          //End of getRoles
+        })
+        //end of getEmployeeNames
+      })
       break
     case 'Remove Employee':
       console.log('remove')
