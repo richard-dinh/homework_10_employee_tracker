@@ -19,6 +19,7 @@ const replaceManagerID = (names, employees)=>{
         employees[i].manager_name = 'Null'
       }
     }
+    //delete the manager_id at the end so it does not populate on console.table
     delete employees[i].manager_id
   }
   return employees
@@ -42,8 +43,23 @@ const init = async () => {
         })
       break
     case 'View all Employees by Department':
-      console.log('dept')
-      init()
+      getDepartments(departments =>{
+        let department_names =[]
+        //populating department_names with the choices for prompt
+        departments.forEach(department =>{
+          department_names.push(department.department_name)
+        })
+        console.log(department_names)
+        init()
+      })
+      // let {deptName} = prompt([
+      //   {
+      //     type: 'list',
+      //     name: deptName,
+      //     message: "Which Department would you like to view?",
+      //     choices:
+      //   }
+      // ])
       break
     case 'View all Employees by Manager':
       console.log('manager')
