@@ -112,29 +112,41 @@ const init = async () => {
             {
               type: 'list',
               name: 'manager',
-              message: `Who is the new Employee's Manager?`,
+              message: `Who is the new Employee's Manager (Select None for no manager)?`,
               choices: employees
             }
           ])
           .then(({first_name, last_name, role, manager})=>{
             getRole(role, data=>{
-              console.log(data)
-              process.exit()
+              let role_id = data[0].role_id
+              if(manager==='None'){
+                createEmployee(
+                  {
+                    first_name: first_name,
+                    last_name: last_name,
+                    role_id: role_id
+                  }, () =>{
+                    console.log('Employee Successfully Created!')
+                    init()
+                  })
+              }else{
+                //need to get manager id given manager name
+                getEmployeeByName(manager, data => {
+                  //only getting employeeID
+                  let id = data[0].employee_id
+                  createEmployee(
+                    {
+                      first_name: first_name,
+                      last_name: last_name,
+                      role_id: role_id,
+                      manager_id: id
+                    }, () => {
+                      console.log('Employee Successfully Created!')
+                      init()
+                    })
+                })
+              }
             })
-            // console.log(first_name, last_name, role, manager)
-            // if(manager ==='None'){
-            //   createEmployee(
-            //     {
-            //       first_name: first_name,
-            //       last_name: last_name
-            //     },()=>{})
-            // }else{
-            //   getEmployeeByName(manager, data => {
-            //     //only getting employeeID
-            //     data = data.map(element => element.employee_id)
-            //     process.exit()
-            //   })
-            // }
           })
           .catch(error=>console.error(error))
           //End of getRoles
