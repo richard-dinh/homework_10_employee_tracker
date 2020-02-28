@@ -150,7 +150,7 @@ const init = async () => {
                       role_id: role_id,
                       manager_id: id
                     }, () => {
-                      console.log('Employee Successfully Created!')
+                      console.log(`${first_name} ${last_name} has joined your team!`)
                       init()
                     })
                 })
@@ -164,8 +164,27 @@ const init = async () => {
       })
       break
     case 'Remove Employee':
-      console.log('remove')
-      init()
+      //returns whole names of employees in order to fill up choices in prompt
+      getEmployeeNames(employees=>{
+        employees = employees.map(element => element.whole_name)
+        console.log(employees)
+        prompt([
+          {
+            type: 'list',
+            name: 'choice',
+            message: 'Who would you like to Remove?',
+            choices: employees
+          }
+        ])
+        .then(({choice})=>{
+          console.log(choice)
+          deleteEmployee(choice, ()=>{
+            console.log(`${choice} has been fired!`)
+            init()
+          })
+        })
+        .catch(error=>console.error(error))
+      })
       break
     case 'Update Employee Role':
       console.log('update role')

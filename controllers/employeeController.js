@@ -46,13 +46,14 @@ const employee = {
     })
 
   },
-  //get only employee names
+  //returns first name combined with last name and puts those values in a whole_name column
   getEmployeeNames(callback){
     db.query(`SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS whole_name FROM employees`, (error, employees)=>{
       if(error) throw error
       callback(employees)
     })
   },
+  //get employee by their full name
   getEmployeeByName(fullname, callback){
     db.query(`
     SELECT * FROM employees
