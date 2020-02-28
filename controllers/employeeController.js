@@ -70,9 +70,12 @@ const employee = {
       callback()
     })
   },
-  // update employee
-  updateEmployee(id, updates, callback) {
-    db.query('UPDATE employees SET ? WHERE ?', [updates, {employee_id: id}], error=>{
+  // update employee given fullname
+  updateEmployee(fullname, updates, callback) {
+    db.query(`
+      UPDATE employees
+      SET ?
+      WHERE CONCAT(employees.first_name, ' ', employees.last_name) = '${fullname}';`, updates, error=>{
       if(error) throw error
       callback()
     })

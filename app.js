@@ -167,7 +167,6 @@ const init = async () => {
       //returns whole names of employees in order to fill up choices in prompt
       getEmployeeNames(employees=>{
         employees = employees.map(element => element.whole_name)
-        console.log(employees)
         prompt([
           {
             type: 'list',
@@ -177,7 +176,6 @@ const init = async () => {
           }
         ])
         .then(({choice})=>{
-          console.log(choice)
           deleteEmployee(choice, ()=>{
             console.log(`${choice} has been fired!`)
             init()
@@ -187,8 +185,42 @@ const init = async () => {
       })
       break
     case 'Update Employee Role':
-      console.log('update role')
-      init()
+        //getting all employee names to populate prompt choices
+      getEmployeeNames(employees =>{
+        //making array of only employee titles
+        employees = employees.map(element=> element.whole_name)
+        //getting all roles to populate prompt choices
+        getRoles(roles =>{
+          //making an array of only role_titles
+          roles = roles.map(element=> element.role_title)
+          prompt([
+            {
+              type: 'list',
+              name: 'employee',
+              message: 'Whose role do you want to update?',
+              choices: employees
+            },
+            {
+              type: 'list',
+              name: 'role',
+              message: 'Choose a new role',
+              choices: roles
+            }
+          ])
+          .then(({employee, role})=>{
+            //have to get role id
+            getRole(role, data=>{
+              let id = data[0].role_id
+              //run put call
+              updateEmployee(employee, {role_id: id}, ()=>{
+                console.log(`${employee}'s role has been updated to ${role}`)
+                init()
+              })
+            })
+          })
+          .catch(error=>console.error(error))
+        })
+      })
       break
     case 'Update Employee Manager':
       console.log('manager')
