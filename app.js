@@ -1,5 +1,5 @@
 //Bring in routes
-const { getEmployees, getEmployeesByDepartment, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
+const { getEmployees, getEmployeesByDepartment, getEmployeesByManager, getEmployeesWithID, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
 const { getDepartments, getDepartment, createDepartment, updateDepartment, deleteDepartment } = require('./controllers/departmentController.js')
 const { getRoles, getRole, createRole, updateRole, deleteRole } = require('./controllers/roleController.js')
 
@@ -8,19 +8,58 @@ const cTable = require('console.table')
 //bring in inqurier
 const prompt = require('inquirer').createPromptModule()
 
+
+//replaces the manager id with the employee's name
+const replaceManagerID = (names, employees)=>{
+  for (let i = 0; i < employees.length; i++) {
+    for (let j = 0; j < names.length; j++) {
+      if (employees[i].manager_id === names[j].employee_id) {
+        employees[i].manager_name = names[j].name
+      } else if (employees[i].manager_id === null) {
+        employees[i].manager_name = 'Null'
+      }
+    }
+    //delete the manager_id at the end so it does not populate on console.table
+    delete employees[i].manager_id
+  }
+  return employees
+}
+
 const init = async () => {
   let { choice } = await prompt([
     {
       type: 'list',
       name: 'choice',
       message: 'What would you like to do?',
-      choices: ['View All Employees by Department', 'View all Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles']
+      choices: ['View all Employees', 'View all Employees by Department', 'View all Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager']
     }
   ])
   switch (choice) {
-    case 'View All Employees by Department':
-      console.log('dept')
-      init()
+    case 'View all Employees':
+        getEmployees(employees =>{
+          employees = replaceManagerID(names, employees)
+          console.table(employees)
+          init()
+        })
+      break
+    case 'View all Employees by Department':
+      getDepartments(departments =>{
+        let department_names =[]
+        //populating department_names with the choices for prompt
+        departments.forEach(department =>{
+          department_names.push(department.department_name)
+        })
+        console.log(department_names)
+        init()
+      })
+      // let {deptName} = prompt([
+      //   {
+      //     type: 'list',
+      //     name: deptName,
+      //     message: "Which Department would you like to view?",
+      //     choices:
+      //   }
+      // ])
       break
     case 'View all Employees by Manager':
       console.log('manager')
@@ -42,15 +81,19 @@ const init = async () => {
       console.log('manager')
       init()
       break
-    case 'View All Roles':
-      console.log('view all roles')
-      init()
-      break
-    case 'EXIT':
-      process.exit()
-      break
   }
 }
 
+//populating names array with employee id and combined first and last name
+let names = []
+getEmployeesWithID(data => {
+  data.forEach(person => {
+    names.push(
+      {
+      employee_id: person.employee_id,
+      name: `${person.first_name} ${person.last_name}`
+      }
+    )
+  })
+})
 init()
-
