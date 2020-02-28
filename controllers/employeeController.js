@@ -32,7 +32,7 @@ const employee = {
   //get All Employees under a manager by ID
   getEmployeesByManager(id, callback) {
     db.query(`
-    SELECT employees.first_name, employees.last_name, employees.manager_id FROM employees
+    SELECT employees.first_name, employees.last_name FROM employees
     WHERE ?`, {manager_id: id}, (error, employees)=>{
       if(error) throw error
       callback(employees)
@@ -60,6 +60,17 @@ const employee = {
     WHERE CONCAT(employees.first_name, ' ', employees.last_name) = '${fullname}';`, (error, employee)=>{
       if(error) throw error
       callback(employee)
+    })
+  },
+  //return all managers
+  getAllManagers(callback){
+    db.query(`
+    SELECT employees.employee_id, CONCAT(employees.first_name, ' ', employees.last_name) AS whole_name FROM employees
+    WHERE employees.employee_id IN (SELECT DISTINCT manager_id FROM employees
+    WHERE manager_id IS NOT NULL);
+    `, (error, managers)=>{
+      if(error) throw error
+      callback(managers)
     })
   },
   // create an employee

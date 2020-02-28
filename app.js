@@ -1,5 +1,5 @@
 //Bring in routes
-const { getEmployees, getEmployeesByDepartment, getEmployeesByManager, getEmployeesWithID, getEmployeeNames, getEmployeeByName, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
+const { getEmployees, getEmployeesByDepartment, getEmployeesByManager, getEmployeesWithID, getEmployeeNames, getEmployeeByName, getAllManagers, createEmployee, updateEmployee, deleteEmployee } = require('./controllers/employeeController.js')
 const { getDepartments, getDepartment, createDepartment, updateDepartment, deleteDepartment } = require('./controllers/departmentController.js')
 const { getRoles, getRole, createRole, updateRole, deleteRole } = require('./controllers/roleController.js')
 
@@ -43,7 +43,7 @@ const init = async () => {
       type: 'list',
       name: 'choice',
       message: 'What would you like to do?',
-      choices: ['View all Employees', 'View all Employees by Department', 'View all Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager']
+      choices: ['View all Employees', 'View all Employees by Department', 'View all Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'EXIT']
     }
   ])
   switch (choice) {
@@ -92,6 +92,34 @@ const init = async () => {
       })
       break
     case 'View all Employees by Manager':
+      getAllManagers(managers =>{
+        //updates array to only employee whole names
+        let managerNames = managers
+        managerNames = managerNames.map(element=> element.whole_name)
+        console.log(managers)
+        prompt([
+          {
+            type: 'list',
+            name: 'manager',
+            message: 'Choose a Manager.',
+            choices: managerNames
+          }
+        ])
+        .then(({manager})=>{
+          let id
+          managers.forEach(element=>{
+            if(element.whole_name===manager){
+              id=element.employee_id
+            }
+          })
+          console.log(id)
+          getEmployeesByManager(id, data=>{
+            console.table(data)
+            init()
+          })
+        })
+        .catch(error=> console.error(error))
+      })
       break
     case 'Add Employee':
       getEmployeeNames(employees=>{
@@ -223,9 +251,56 @@ const init = async () => {
       })
       break
     case 'Update Employee Manager':
-      console.log('manager')
-      init()
+      //getting all employee full names
+      getEmployeeNames(employees=>{
+        employees = employees.map(element=>element.whole_name)
+        let managerList = employees
+        //giving option to remove manager
+        managerList.push('NONE')
+        prompt([
+          {
+            type:'list',
+            name: 'employee',
+            message: 'Who do you want to assign a Manager to?',
+            choices: employees
+          },
+          {
+            type:'list',
+            name: 'manager',
+            message: 'Who will be their new Manager?',
+            choices: managerList
+          }
+        ])
+        .then(({employee, manager})=>{
+          if(employee===manager){
+            //checking if the employee is being assigned themself as their manager
+            console.log('Error, they cannot be their own Manager!')
+            init()
+          }
+          //check if removing a manager
+          else if(manager==='NONE'){
+            updateEmployee(employee, {manager_id: null}, ()=>{
+              console.log('Manager has been removed')
+              init()
+            })
+          }else{
+            //getting manager id
+            getEmployeeByName(manager, data=>{
+              let id = data[0].employee_id
+              updateEmployee(employee, {manager_id: id}, ()=>{
+                console.log(`${employee}'s new Manager is now ${manager}`)
+                init()
+              })
+            })
+          }
+        })
+        .catch(error=>console.error(error))
+      })
       break
+      case 'EXIT':
+        console.log('GoodBye!')
+        process.exit()
+        break
   }
 }
 
