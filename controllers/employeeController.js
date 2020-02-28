@@ -32,7 +32,7 @@ const employee = {
   //get All Employees under a manager by ID
   getEmployeesByManager(id, callback) {
     db.query(`
-    SELECT employees.first_name, employees.last_name, employees.manager_id FROM employees
+    SELECT employees.first_name, employees.last_name FROM employees
     WHERE ?`, {manager_id: id}, (error, employees)=>{
       if(error) throw error
       callback(employees)
@@ -46,6 +46,33 @@ const employee = {
     })
 
   },
+  //returns first name combined with last name and puts those values in a whole_name column
+  getEmployeeNames(callback){
+    db.query(`SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS whole_name FROM employees`, (error, employees)=>{
+      if(error) throw error
+      callback(employees)
+    })
+  },
+  //get employee by their full name
+  getEmployeeByName(fullname, callback){
+    db.query(`
+    SELECT * FROM employees
+    WHERE CONCAT(employees.first_name, ' ', employees.last_name) = '${fullname}';`, (error, employee)=>{
+      if(error) throw error
+      callback(employee)
+    })
+  },
+  //return all managers
+  getAllManagers(callback){
+    db.query(`
+    SELECT employees.employee_id, CONCAT(employees.first_name, ' ', employees.last_name) AS whole_name FROM employees
+    WHERE employees.employee_id IN (SELECT DISTINCT manager_id FROM employees
+    WHERE manager_id IS NOT NULL);
+    `, (error, managers)=>{
+      if(error) throw error
+      callback(managers)
+    })
+  },
   // create an employee
   createEmployee(employeeInfo, callback) {
     //employee info must be passed in as an object with all the necessary info
@@ -54,16 +81,19 @@ const employee = {
       callback()
     })
   },
-  // update employee
-  updateEmployee(id, updates, callback) {
-    db.query('UPDATE employees SET ? WHERE ?', [updates, {employee_id: id}], error=>{
+  // update employee given fullname
+  updateEmployee(fullname, updates, callback) {
+    db.query(`
+      UPDATE employees
+      SET ?
+      WHERE CONCAT(employees.first_name, ' ', employees.last_name) = '${fullname}';`, updates, error=>{
       if(error) throw error
       callback()
     })
   },
   // delete employee
-  deleteEmployee(id, callback) {
-    db.query('DELETE FROM employees WHERE ?', {employee_id: id}, error=>{
+  deleteEmployee(fullname, callback) {
+    db.query(`DELETE FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name) = '${fullname}';`, error=>{
       if(error) throw error
       callback()
     })
