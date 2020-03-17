@@ -96,7 +96,6 @@ const init = async () => {
         //updates array to only employee whole names
         let managerNames = managers
         managerNames = managerNames.map(element=> element.whole_name)
-        console.log(managers)
         prompt([
           {
             type: 'list',
@@ -112,7 +111,6 @@ const init = async () => {
               id=element.employee_id
             }
           })
-          console.log(id)
           getEmployeesByManager(id, data=>{
             console.table(data)
             init()
